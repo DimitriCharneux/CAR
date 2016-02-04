@@ -1,7 +1,7 @@
 public class CodeDeRetour {
 	public static final int SERVICE_PRET = 220, ATTENTE_MDP = 331,
 			AUTHENTIFICATION_FAIL = 332, AUTHENTIFICATION_OK = 230,
-			BEGIN_TRANSFERT = 125, END_TRANSFERT = 226, DECONNEXION = 221;
+			BEGIN_TRANSFERT = 125, END_TRANSFERT = 226, DECONNEXION = 221, NONCONNECTE = 532;
 
 	public static String servicePret(){
 		return SERVICE_PRET + " : service pret.\n";
@@ -32,7 +32,9 @@ public class CodeDeRetour {
 	}
 	
 	
-	
+	public static String nonConnecte(){
+		return NONCONNECTE + " : Vous devez-être connecté pour effectuer cette action.\n";
+	}
 	
 	
 	
