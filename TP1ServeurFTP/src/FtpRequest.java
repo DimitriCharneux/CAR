@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class FtpRequest extends Thread {
-	private Socket soc;
+	private Socket soc,sc;
 	private int timeOut;
 	private OutputStreamWriter outputwriter;
 	private BufferedReader inputreader;
@@ -43,6 +45,11 @@ public class FtpRequest extends Thread {
 
 	private void processRequest() throws IOException {
 		String[] cmd = inputreader.readLine().split(" ", 2);
+		System.out.println("commande recu :");
+		for(String tmp : cmd)System.out.println("\t"+tmp);
+		
+		
+		
 		switch (cmd[0]) {
 		case "USER":
 			if (cmd.length < 2) {
@@ -79,6 +86,18 @@ public class FtpRequest extends Thread {
 			if (estAuthentifer && cmd.length == 2)
 				processRETR(cmd[1]);
 			else
+				send(CodeDeRetour.nonConnecte());
+			break;
+		case "PORT":
+			if (estAuthentifer && cmd.length == 2){
+				String[] tmpPort = cmd[1].split(",");
+				String tmp="";
+				int port = Integer.parseInt(tmpPort[4])*256 + Integer.parseInt(tmpPort[5]);
+				for(int i=0; i<4; i++)tmp+=tmpPort[i] + ".";
+				tmp = tmp.substring(0, tmp.length()-1);
+				System.out.println("addr : \'"+tmp+"\', port : \'"+port+"\'");
+				sc = new Socket(tmp, port);
+			}else
 				send(CodeDeRetour.nonConnecte());
 			break;
 		case "QUIT":
