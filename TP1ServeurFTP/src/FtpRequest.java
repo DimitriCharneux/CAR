@@ -8,11 +8,12 @@ import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class FtpRequest extends Thread {
-	private Socket soc,sc;
+	private Socket soc,socData;
 	private int timeOut;
-	private OutputStreamWriter outputwriter;
+	private OutputStreamWriter outputwriter, outputWriterData;
 	private BufferedReader inputreader;
 	private boolean estAuthentifer, veutQuitter;
 	private String utilisateurConnecte, tmpUser;
@@ -90,13 +91,7 @@ public class FtpRequest extends Thread {
 			break;
 		case "PORT":
 			if (estAuthentifer && cmd.length == 2){
-				String[] tmpPort = cmd[1].split(",");
-				String tmp="";
-				int port = Integer.parseInt(tmpPort[4])*256 + Integer.parseInt(tmpPort[5]);
-				for(int i=0; i<4; i++)tmp+=tmpPort[i] + ".";
-				tmp = tmp.substring(0, tmp.length()-1);
-				System.out.println("addr : \'"+tmp+"\', port : \'"+port+"\'");
-				sc = new Socket(tmp, port);
+				processPort(cmd[1]);
 			}else
 				send(CodeDeRetour.nonConnecte());
 			break;
@@ -109,6 +104,22 @@ public class FtpRequest extends Thread {
 		}
 	}
 
+	private void processPort(String cmd) {
+		String[] tmpPort = cmd.split(",");
+		String tmp="";
+		int port = Integer.parseInt(tmpPort[4])*256 + Integer.parseInt(tmpPort[5]);
+		for(int i=0; i<4; i++)tmp+=tmpPort[i] + ".";
+		tmp = tmp.substring(0, tmp.length()-1);
+		System.out.println("addr : \'"+tmp+"\', port : \'"+port+"\'");
+		try {
+			socData = new Socket(tmp, port);
+			send(CodeDeRetour.serviceOk());
+		} catch (Exception e) {
+			send(CodeDeRetour.erreurArgs());
+		}
+		
+	}
+
 	private void processRETR(String pathname) {
 		try {
 			InputStream flux=new FileInputStream(repertoire.getPath() + "/" + pathname); 
@@ -119,7 +130,7 @@ public class FtpRequest extends Thread {
 				tmp += line + "\n";
 			}
 			buff.close();
-			send(tmp);
+			sendData(tmp);
 		} catch (Exception e) {
 
 		}
@@ -146,7 +157,7 @@ public class FtpRequest extends Thread {
 		for (File f : files) {
 			listFile += f.getName() + "\n";
 		}
-		send(listFile);
+		sendData(listFile);
 	}
 
 	private void deconnexion() throws IOException {
@@ -163,6 +174,19 @@ public class FtpRequest extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void sendData(String msg) {
+		send(CodeDeRetour.beginTransfert());
+		try {
+			outputWriterData = new OutputStreamWriter(socData.getOutputStream());
+			outputWriterData.write(msg);
+			outputWriterData.flush();
+			socData.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		send(CodeDeRetour.endTransfert());
 	}
 
 }
