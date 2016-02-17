@@ -1,4 +1,11 @@
-public class CodeDeRetour {
+package ftpServer;
+
+/**
+ * Class contains the return code of the server FTP.
+ * @author Dimitri Charneux
+ *
+ */
+public class ReturnCode {
 	public static final int SERVICE_PRET = 220, ATTENTE_MDP = 331,
 			AUTHENTIFICATION_FAIL = 332, AUTHENTIFICATION_OK = 230,
 			BEGIN_TRANSFERT = 125, END_TRANSFERT = 226, DECONNEXION = 221,

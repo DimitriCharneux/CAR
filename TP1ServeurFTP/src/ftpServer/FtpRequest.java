@@ -1,3 +1,4 @@
+package ftpServer;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +9,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
+/**
+ * This class manage one client connected to the FTP server.
+ * 
+ * @author Dimitri Charneux
+ * 
+ */
 public class FtpRequest extends Thread {
 	private Socket soc, socData;
 	private int timeOut;
@@ -17,6 +24,11 @@ public class FtpRequest extends Thread {
 	private String utilisateurConnecte, tmpUser, repPrinc;
 	private File repertoire;
 
+	/**
+	 * Constructor of this class.
+	 * 
+	 * @param soc
+	 */
 	public FtpRequest(Socket soc) {
 		super("Thread ftp request");
 		this.soc = soc;
@@ -25,12 +37,16 @@ public class FtpRequest extends Thread {
 		veutQuitter = false;
 	}
 
+	/**
+	 * The heart of this class. This method receive and process all request of
+	 * the client until the client stay connected.
+	 */
 	public void run() {
 		try {
 			outputwriter = new OutputStreamWriter(soc.getOutputStream());
 			inputreader = new BufferedReader(new InputStreamReader(
 					soc.getInputStream()));
-			send(CodeDeRetour.servicePret());
+			send(ReturnCode.servicePret());
 			while (!veutQuitter) {
 				processRequest();
 			}
@@ -42,6 +58,10 @@ public class FtpRequest extends Thread {
 		System.out.println("fin du thread");
 	}
 
+	/**
+	 * This method sort the request and send the related function.
+	 * @throws IOException
+	 */
 	private void processRequest() throws IOException {
 		String[] cmd = inputreader.readLine().split(" ", 2);
 		System.out.println("commande recu :");
@@ -51,7 +71,7 @@ public class FtpRequest extends Thread {
 		switch (cmd[0]) {
 		case "USER":
 			if (cmd.length < 2) {
-				send(CodeDeRetour.authentificationFail());
+				send(ReturnCode.authentificationFail());
 				return;
 			}
 			if (estAuthentifer) {
@@ -59,16 +79,16 @@ public class FtpRequest extends Thread {
 				utilisateurConnecte = "";
 			}
 			tmpUser = cmd[1];
-			send(CodeDeRetour.attenteMdp());
+			send(ReturnCode.attenteMdp());
 			break;
 		case "PASS":
 			if (tmpUser != null && cmd.length == 2 && tmpUser.equals(cmd[1])) {
 				estAuthentifer = true;
 				utilisateurConnecte = tmpUser;
-				send(CodeDeRetour.authentificationOk());
-				ouvreRepertoire();
+				send(ReturnCode.authentificationOk());
+				openRepository();
 			} else {
-				send(CodeDeRetour.authentificationFail());
+				send(ReturnCode.authentificationFail());
 			}
 			break;
 		case "ECHO":
@@ -78,52 +98,52 @@ public class FtpRequest extends Thread {
 			if (estAuthentifer)
 				processLIST();
 			else
-				send(CodeDeRetour.nonConnecte());
+				send(ReturnCode.nonConnecte());
 			break;
 		case "RETR":
 			if (estAuthentifer && cmd.length == 2)
 				processRETR(cmd[1]);
 			else
-				send(CodeDeRetour.nonConnecte());
+				send(ReturnCode.nonConnecte());
 			break;
 		case "PORT":
 			if (estAuthentifer && cmd.length == 2) {
 				processPort(cmd[1]);
 			} else
-				send(CodeDeRetour.nonConnecte());
+				send(ReturnCode.nonConnecte());
 			break;
 		case "STOR":
 			if (estAuthentifer && cmd.length == 2) {
 				processSTOR(cmd[1]);
 			} else
-				send(CodeDeRetour.nonConnecte());
+				send(ReturnCode.nonConnecte());
 			break;
 		case "PWD":
 			if (estAuthentifer) {
 				processPWD();
 			} else
-				send(CodeDeRetour.nonConnecte());
+				send(ReturnCode.nonConnecte());
 			break;
 		case "CWD":
 			if (estAuthentifer && cmd.length == 2) {
 				processCWD(cmd[1]);
 			} else
-				send(CodeDeRetour.nonConnecte());
+				send(ReturnCode.nonConnecte());
 			break;
 		case "MKD":
 			if (estAuthentifer && cmd.length == 2) {
 				processMKD(cmd[1]);
 			} else
-				send(CodeDeRetour.nonConnecte());
+				send(ReturnCode.nonConnecte());
 			break;
 		case "CDUP":
 			if (estAuthentifer) {
 				processCDUP();
 			} else
-				send(CodeDeRetour.nonConnecte());
+				send(ReturnCode.nonConnecte());
 			break;
 		case "QUIT":
-			deconnexion();
+			disconnect();
 			return;
 		default:
 			send("Commande \'" + cmd[0] + "\' Inconnue.\n");
@@ -131,6 +151,10 @@ public class FtpRequest extends Thread {
 		}
 	}
 
+	/**
+	 * This method receive the port to send and receive the data by the client.
+	 * @param cmd 
+	 */
 	private void processPort(String cmd) {
 		String[] tmpPort = cmd.split(",");
 		String tmp = "";
@@ -142,13 +166,17 @@ public class FtpRequest extends Thread {
 		System.out.println("addr : \'" + tmp + "\', port : \'" + port + "\'");
 		try {
 			socData = new Socket(tmp, port);
-			send(CodeDeRetour.serviceOk());
+			send(ReturnCode.serviceOk());
 		} catch (Exception e) {
-			send(CodeDeRetour.erreurArgs());
+			send(ReturnCode.erreurArgs());
 		}
 
 	}
 
+	/**
+	 * This method return the file hope by the client.
+	 * @param pathname file hope by the client.
+	 */
 	private void processRETR(String pathname) {
 		try {
 			InputStream flux = new FileInputStream(repertoire.getPath() + "/"
@@ -167,10 +195,15 @@ public class FtpRequest extends Thread {
 
 	}
 
+	/**
+	 * This method record a file send by the client in the current directory.
+	 * @param fileName
+	 */
 	private void processSTOR(String fileName) {
-		File fichier = new File(repertoire.getPath() +"/" +fileName);
+		File fichier = new File(repertoire.getPath() + "/" + fileName);
 		String data = receiveData();
-		if(data == null)return ;
+		if (data == null)
+			return;
 		try {
 			fichier.createNewFile();
 			FileOutputStream output = new FileOutputStream(fichier);
@@ -180,46 +213,73 @@ public class FtpRequest extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * This method return the path of the current working directory.
+	 */
 	private void processPWD() {
 		System.out.println("path : " + repertoire.getPath());
 		send(repertoire.getPath() + "\n");
 	}
-	
 
+	/**
+	 * This method change the current working directory.
+	 * @param nameRep new working directory.
+	 */
 	private void processCWD(String nameRep) {
 		File[] tmp = repertoire.listFiles();
 		for (File rep : tmp) {
 			if (rep.getName().equals(nameRep) && rep.isDirectory()) {
 				repertoire = rep;
-				send(CodeDeRetour.serviceOk());
+				send(ReturnCode.serviceOk());
 				return;
 			}
 		}
-		send(CodeDeRetour.erreur());
+		send(ReturnCode.erreur());
 	}
-	
+
+	/**
+	 * This method create a new directory in the current working directory.
+	 * @param string the name of the new directory.
+	 */
 	private void processMKD(String string) {
 		repertoire = new File(repertoire.getPath() + "/" + string);
 		repertoire.mkdir();
 		repertoire = repertoire.getParentFile();
-		send(CodeDeRetour.serviceOk());
+		send(ReturnCode.serviceOk());
 	}
-
+	
+	/**
+	 * This method go in the parent of the current working directory.
+	 */
 	private void processCDUP() {
 		System.out.println(repPrinc);
 		System.out.println(repertoire.getPath());
-		
-		if(!repertoire.getPath().equals(repPrinc)){
+
+		if (!repertoire.getPath().equals(repPrinc)) {
 			repertoire = repertoire.getParentFile();
-			send(CodeDeRetour.serviceOk());
+			send(ReturnCode.serviceOk());
 		} else {
-			send(CodeDeRetour.erreur());
+			send(ReturnCode.erreur());
 		}
 	}
-	
 
-	private void ouvreRepertoire() {
+	/**
+	 * This method return the list of files in the current working directory.
+	 */
+	private void processLIST() {
+		String listFile = "";
+		File[] files = repertoire.listFiles();
+		for (File f : files) {
+			listFile += f.getName() + "\n";
+		}
+		sendData(listFile);
+	}
+	
+	/**
+	 * Open the main working directory of the client.
+	 */
+	private void openRepository() {
 		repertoire = new File("repPrincipale");
 		repertoire.mkdir();
 		File[] tmp = repertoire.listFiles();
@@ -235,22 +295,21 @@ public class FtpRequest extends Thread {
 		repPrinc = repertoire.getPath();
 	}
 
-	private void processLIST() {
-		String listFile = "";
-		File[] files = repertoire.listFiles();
-		for (File f : files) {
-			listFile += f.getName() + "\n";
-		}
-		sendData(listFile);
-	}
-
-	private void deconnexion() throws IOException {
-		send(CodeDeRetour.deconnexion());
+	/**
+	 * Disconnect the client to the server.
+	 * @throws IOException
+	 */
+	private void disconnect() throws IOException {
+		send(ReturnCode.deconnexion());
 		estAuthentifer = false;
 		veutQuitter = true;
 		soc.close();
 	}
 
+	/**
+	 * Send a message to the main port of the client.
+	 * @param msg Message send to the client.
+	 */
 	private void send(String msg) {
 		try {
 			outputwriter.write(msg);
@@ -260,8 +319,12 @@ public class FtpRequest extends Thread {
 		}
 	}
 
+	/**
+	 * Send a message to the data port of the client.
+	 * @param msg message send to the client.
+	 */
 	private void sendData(String msg) {
-		send(CodeDeRetour.beginTransfert());
+		send(ReturnCode.beginTransfert());
 		try {
 			outputWriterData = new OutputStreamWriter(socData.getOutputStream());
 			outputWriterData.write(msg);
@@ -270,23 +333,27 @@ public class FtpRequest extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		send(CodeDeRetour.endTransfert());
+		send(ReturnCode.endTransfert());
 	}
 
+	/**
+	 * Method to receive data on the data port of the client.
+	 * @return data send by the client.
+	 */
 	private String receiveData() {
-		send(CodeDeRetour.beginTransfert());
+		send(ReturnCode.beginTransfert());
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					socData.getInputStream()));
 			String res = "", tmp;
-			while((tmp = br.readLine())!=null){
+			while ((tmp = br.readLine()) != null) {
 				res += tmp + "\n";
 			}
-			send(CodeDeRetour.endTransfert());
+			send(ReturnCode.endTransfert());
 			return res;
 		} catch (IOException e) {
 			e.printStackTrace();
-			send(CodeDeRetour.endTransfert());
+			send(ReturnCode.endTransfert());
 			return null;
 		}
 	}

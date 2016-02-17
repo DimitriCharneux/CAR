@@ -1,4 +1,9 @@
-salut, ça va?
-Bien et toi?
-tranquille mouquile
-Euheuheuheuh
+Serveur FTP
+Dimitri Charneux
+
+Toutes les fonctionnalités demandées ont était implémentées.
+
+Pour lancer le programme, n'oublier pas de spécifier le repertoire principale en argument !
+
+
+Comme rien n'était spécifié à ce sujet, j'ai décidé qu'un utilisateur est correcte si son pseudo et son mot de passe sont les mêmes.
