@@ -219,7 +219,7 @@ public class FtpRequest extends Thread {
 	 */
 	private void processPWD() {
 		System.out.println("path : " + repertoire.getPath());
-		send(repertoire.getPath() + "\n");
+		send(repertoire.getPath().replace("repPrincipale", "") + "\n");
 	}
 
 	/**
@@ -227,22 +227,56 @@ public class FtpRequest extends Thread {
 	 * @param nameRep new working directory.
 	 */
 	private void processCWD(String nameRep) {
-		File[] tmp = repertoire.listFiles();
-		for (File rep : tmp) {
-			if (rep.getName().equals(nameRep) && rep.isDirectory()) {
-				repertoire = rep;
+		File tmp = null;
+		if(nameRep.startsWith("/" + utilisateurConnecte)){
+			tmp  = new File(repPrinc);
+			if(nameRep.equals("/" + utilisateurConnecte)){
+				repertoire = tmp;
 				send(ReturnCode.serviceOk());
 				return;
 			}
+			nameRep = nameRep.replace("/" + utilisateurConnecte+"/", "");
+		} else {
+			tmp = repertoire;
 		}
-		send(ReturnCode.erreur());
+		String[] strs = nameRep.split("/");
+		System.out.println(nameRep);
+		for(String str : strs){
+			System.out.println("str : " + str);
+			tmp = changeInDirectory(str, tmp);
+			if(tmp == null){
+				send(ReturnCode.erreur());
+				return;
+			}
+		}
+		if(tmp.getPath().startsWith(repPrinc)){
+			repertoire = tmp;
+			send(ReturnCode.serviceOk());
+		} else {
+			send(ReturnCode.erreur());
+		}
+		
 	}
+	
+	private File changeInDirectory(String dir, File begin){
+		if(dir.equals("..")) return begin.getPath().contains(utilisateurConnecte)?begin.getParentFile():null;
+		File[] tmp = begin.listFiles();
+		for (File rep : tmp) {
+			System.out.println("sv");
+			if (rep.getName().equals(dir) && rep.isDirectory()) {
+				return rep;
+			}
+		}
+		return null;
+	}
+	
 
 	/**
 	 * This method create a new directory in the current working directory.
 	 * @param string the name of the new directory.
 	 */
 	private void processMKD(String string) {
+		string = string.replaceAll("\\W", "_");
 		repertoire = new File(repertoire.getPath() + "/" + string);
 		repertoire.mkdir();
 		repertoire = repertoire.getParentFile();
@@ -253,9 +287,6 @@ public class FtpRequest extends Thread {
 	 * This method go in the parent of the current working directory.
 	 */
 	private void processCDUP() {
-		System.out.println(repPrinc);
-		System.out.println(repertoire.getPath());
-
 		if (!repertoire.getPath().equals(repPrinc)) {
 			repertoire = repertoire.getParentFile();
 			send(ReturnCode.serviceOk());
