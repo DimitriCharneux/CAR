@@ -12,7 +12,7 @@ import java.net.ServerSocket;
 public class Server {
 
 	private int port;
-	private String repertoire;
+	public static String repertoire;
 
 	/**
 	 * Constructor of this class. She take two parameters. The port to connect

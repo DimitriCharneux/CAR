@@ -91,18 +91,15 @@ public class FtpRequest extends Thread {
 				send(ReturnCode.authentificationFail());
 			}
 			break;
-		case "ECHO":
-			send(cmd[1] + "\n");
-			break;
 		case "LIST":
 			if (estAuthentifer)
-				processLIST();
+				sendData(processLIST());
 			else
 				send(ReturnCode.nonConnecte());
 			break;
 		case "RETR":
 			if (estAuthentifer && cmd.length == 2)
-				processRETR(cmd[1]);
+				sendData(processRETR(cmd[1]));
 			else
 				send(ReturnCode.nonConnecte());
 			break;
@@ -120,25 +117,25 @@ public class FtpRequest extends Thread {
 			break;
 		case "PWD":
 			if (estAuthentifer) {
-				processPWD();
+				send(processPWD());
 			} else
 				send(ReturnCode.nonConnecte());
 			break;
 		case "CWD":
 			if (estAuthentifer && cmd.length == 2) {
-				processCWD(cmd[1]);
+				send(processCWD(cmd[1]));
 			} else
 				send(ReturnCode.nonConnecte());
 			break;
 		case "MKD":
 			if (estAuthentifer && cmd.length == 2) {
-				processMKD(cmd[1]);
+				send(processMKD(cmd[1]));
 			} else
 				send(ReturnCode.nonConnecte());
 			break;
 		case "CDUP":
 			if (estAuthentifer) {
-				processCDUP();
+				send(processCDUP());
 			} else
 				send(ReturnCode.nonConnecte());
 			break;
@@ -177,7 +174,7 @@ public class FtpRequest extends Thread {
 	 * This method return the file hope by the client.
 	 * @param pathname file hope by the client.
 	 */
-	private void processRETR(String pathname) {
+	private String processRETR(String pathname) {
 		try {
 			InputStream flux = new FileInputStream(repertoire.getPath() + "/"
 					+ pathname);
@@ -188,9 +185,9 @@ public class FtpRequest extends Thread {
 				tmp += line + "\n";
 			}
 			buff.close();
-			sendData(tmp);
+			return tmp;
 		} catch (Exception e) {
-
+			return null;
 		}
 
 	}
@@ -217,23 +214,21 @@ public class FtpRequest extends Thread {
 	/**
 	 * This method return the path of the current working directory.
 	 */
-	private void processPWD() {
-		System.out.println("path : " + repertoire.getPath());
-		send(repertoire.getPath().replace("repPrincipale", "") + "\n");
+	private String processPWD() {
+		return repertoire.getPath().replace("repPrincipale", "") + "\n";
 	}
 
 	/**
 	 * This method change the current working directory.
 	 * @param nameRep new working directory.
 	 */
-	private void processCWD(String nameRep) {
+	private String processCWD(String nameRep) {
 		File tmp = null;
 		if(nameRep.startsWith("/" + utilisateurConnecte)){
 			tmp  = new File(repPrinc);
 			if(nameRep.equals("/" + utilisateurConnecte)){
 				repertoire = tmp;
-				send(ReturnCode.serviceOk());
-				return;
+				return ReturnCode.serviceOk();
 			}
 			nameRep = nameRep.replace("/" + utilisateurConnecte+"/", "");
 		} else {
@@ -245,15 +240,14 @@ public class FtpRequest extends Thread {
 			System.out.println("str : " + str);
 			tmp = changeInDirectory(str, tmp);
 			if(tmp == null){
-				send(ReturnCode.erreur());
-				return;
+				return ReturnCode.erreur();
 			}
 		}
 		if(tmp.getPath().startsWith(repPrinc)){
 			repertoire = tmp;
-			send(ReturnCode.serviceOk());
+			return ReturnCode.serviceOk();
 		} else {
-			send(ReturnCode.erreur());
+			return ReturnCode.erreur();
 		}
 		
 	}
@@ -275,43 +269,43 @@ public class FtpRequest extends Thread {
 	 * This method create a new directory in the current working directory.
 	 * @param string the name of the new directory.
 	 */
-	private void processMKD(String string) {
+	private String processMKD(String string) {
 		string = string.replaceAll("\\W", "_");
 		repertoire = new File(repertoire.getPath() + "/" + string);
 		repertoire.mkdir();
 		repertoire = repertoire.getParentFile();
-		send(ReturnCode.serviceOk());
+		return ReturnCode.serviceOk();
 	}
 	
 	/**
 	 * This method go in the parent of the current working directory.
 	 */
-	private void processCDUP() {
+	private String processCDUP() {
 		if (!repertoire.getPath().equals(repPrinc)) {
 			repertoire = repertoire.getParentFile();
-			send(ReturnCode.serviceOk());
+			return ReturnCode.serviceOk();
 		} else {
-			send(ReturnCode.erreur());
+			return ReturnCode.erreur();
 		}
 	}
 
 	/**
 	 * This method return the list of files in the current working directory.
 	 */
-	private void processLIST() {
+	private String processLIST() {
 		String listFile = "";
 		File[] files = repertoire.listFiles();
 		for (File f : files) {
 			listFile += f.getName() + "\n";
 		}
-		sendData(listFile);
+		return listFile;
 	}
 	
 	/**
 	 * Open the main working directory of the client.
 	 */
 	private void openRepository() {
-		repertoire = new File("repPrincipale");
+		repertoire = new File(Server.repertoire);
 		repertoire.mkdir();
 		File[] tmp = repertoire.listFiles();
 		for (File rep : tmp) {
