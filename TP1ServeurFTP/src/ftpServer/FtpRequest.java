@@ -152,7 +152,7 @@ public class FtpRequest extends Thread {
 	 * This method receive the port to send and receive the data by the client.
 	 * @param cmd 
 	 */
-	private void processPort(String cmd) {
+	public void processPort(String cmd) {
 		String[] tmpPort = cmd.split(",");
 		String tmp = "";
 		int port = Integer.parseInt(tmpPort[4]) * 256
@@ -174,7 +174,7 @@ public class FtpRequest extends Thread {
 	 * This method return the file hope by the client.
 	 * @param pathname file hope by the client.
 	 */
-	private String processRETR(String pathname) {
+	public String processRETR(String pathname) {
 		try {
 			InputStream flux = new FileInputStream(repertoire.getPath() + "/"
 					+ pathname);
@@ -196,7 +196,7 @@ public class FtpRequest extends Thread {
 	 * This method record a file send by the client in the current directory.
 	 * @param fileName
 	 */
-	private void processSTOR(String fileName) {
+	public void processSTOR(String fileName) {
 		File fichier = new File(repertoire.getPath() + "/" + fileName);
 		String data = receiveData();
 		if (data == null)
@@ -214,15 +214,15 @@ public class FtpRequest extends Thread {
 	/**
 	 * This method return the path of the current working directory.
 	 */
-	private String processPWD() {
-		return repertoire.getPath().replace("repPrincipale", "") + "\n";
+	public String processPWD() {
+		return repertoire.getPath().replace(Server.repertoire, "") + "\n";
 	}
 
 	/**
 	 * This method change the current working directory.
 	 * @param nameRep new working directory.
 	 */
-	private String processCWD(String nameRep) {
+	public String processCWD(String nameRep) {
 		File tmp = null;
 		if(nameRep.startsWith("/" + utilisateurConnecte)){
 			tmp  = new File(repPrinc);
@@ -237,7 +237,6 @@ public class FtpRequest extends Thread {
 		String[] strs = nameRep.split("/");
 		System.out.println(nameRep);
 		for(String str : strs){
-			System.out.println("str : " + str);
 			tmp = changeInDirectory(str, tmp);
 			if(tmp == null){
 				return ReturnCode.erreur();
@@ -252,11 +251,10 @@ public class FtpRequest extends Thread {
 		
 	}
 	
-	private File changeInDirectory(String dir, File begin){
+	public File changeInDirectory(String dir, File begin){
 		if(dir.equals("..")) return begin.getPath().contains(utilisateurConnecte)?begin.getParentFile():null;
 		File[] tmp = begin.listFiles();
 		for (File rep : tmp) {
-			System.out.println("sv");
 			if (rep.getName().equals(dir) && rep.isDirectory()) {
 				return rep;
 			}
@@ -269,7 +267,7 @@ public class FtpRequest extends Thread {
 	 * This method create a new directory in the current working directory.
 	 * @param string the name of the new directory.
 	 */
-	private String processMKD(String string) {
+	public String processMKD(String string) {
 		string = string.replaceAll("\\W", "_");
 		repertoire = new File(repertoire.getPath() + "/" + string);
 		repertoire.mkdir();
@@ -280,7 +278,7 @@ public class FtpRequest extends Thread {
 	/**
 	 * This method go in the parent of the current working directory.
 	 */
-	private String processCDUP() {
+	public String processCDUP() {
 		if (!repertoire.getPath().equals(repPrinc)) {
 			repertoire = repertoire.getParentFile();
 			return ReturnCode.serviceOk();
@@ -292,7 +290,7 @@ public class FtpRequest extends Thread {
 	/**
 	 * This method return the list of files in the current working directory.
 	 */
-	private String processLIST() {
+	public String processLIST() {
 		String listFile = "";
 		File[] files = repertoire.listFiles();
 		for (File f : files) {
@@ -304,7 +302,7 @@ public class FtpRequest extends Thread {
 	/**
 	 * Open the main working directory of the client.
 	 */
-	private void openRepository() {
+	public void openRepository() {
 		repertoire = new File(Server.repertoire);
 		repertoire.mkdir();
 		File[] tmp = repertoire.listFiles();
@@ -315,7 +313,7 @@ public class FtpRequest extends Thread {
 				return;
 			}
 		}
-		repertoire = new File("repPrincipale/" + utilisateurConnecte);
+		repertoire = new File(Server.repertoire +"/"+ utilisateurConnecte);
 		repertoire.mkdir();
 		repPrinc = repertoire.getPath();
 	}
@@ -382,5 +380,16 @@ public class FtpRequest extends Thread {
 			return null;
 		}
 	}
-
+	
+	public File getRepertoire(){
+		return repertoire;
+	}
+	
+	public void setRepertoire(File f){
+		repertoire = f;
+	}
+	
+	public void setUtilisateurConnecte(String s){
+		utilisateurConnecte = s;
+	}
 }
