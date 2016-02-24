@@ -95,11 +95,11 @@ public class Test {
 		output.write("test".getBytes());
 		output.close();
 		String tmp = "repTest\nfileTest\n";
-		assertEquals(tmp, req.processLIST());
+		assertEquals(tmp, new String(req.processLIST()));
 		f.delete();
 		f = new File("repertoireTest/userTest/repTest");
 		f.delete();
-		assertEquals("", req.processLIST());
+		assertEquals("", new String(req.processLIST()));
 	}
 	
 	@org.junit.Test
@@ -110,7 +110,7 @@ public class Test {
 		FileOutputStream output = new FileOutputStream(f);
 		output.write("test".getBytes());
 		output.close();
-		assertEquals("test\n", req.processRETR("fileTest"));
+		assertEquals("test", new String(req.processRETR("fileTest")));
 		f.delete();
 		assertNull(req.processRETR("fileTest"));
 	}
