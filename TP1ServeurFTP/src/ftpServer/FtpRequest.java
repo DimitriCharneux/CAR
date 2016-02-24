@@ -1,14 +1,12 @@
 package ftpServer;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -23,7 +21,6 @@ import java.util.List;
  */
 public class FtpRequest extends Thread {
 	private Socket soc, socData;
-	private int timeOut;
 	private OutputStreamWriter outputwriter;
 	private BufferedReader inputreader;
 	private boolean estAuthentifer, veutQuitter;
@@ -38,7 +35,6 @@ public class FtpRequest extends Thread {
 	public FtpRequest(Socket soc) {
 		super("Thread ftp request");
 		this.soc = soc;
-		this.timeOut = 5;
 		this.estAuthentifer = false;
 		veutQuitter = false;
 	}
