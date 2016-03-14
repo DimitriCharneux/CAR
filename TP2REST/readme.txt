@@ -1,32 +1,38 @@
-README
-------
+Dimitri Charneux
 
-Ce projet fournit un framework simple [1] pour l'execution de programmes
-accessibles en tant que ressources REST.
+Pour se connecter : 
+http://localhost:8080/rest/tp2/ftp/co/login/mdp
 
-Les ressources se programment comment des classes annotees avec l'API JAX-RS.
-Voir un example avec la classe car.tp2.HelloWorldResource.
+se deconnecter : 
+http://localhost:8080/rest/tp2/ftp/deco
 
-Pour pouvoir etre prises en compte par le framework, les ressources doivent etre
-declarees dans la classe car.tp2.Config, methode addResources. La declaration se
-fait en ajoutant une ligne de la forme :
+lister les fichiers et dossiers : 
+http://localhost:8080/rest/tp2/ftp/ls
 
-	resources.add( new MaClasseDeResource() )
-	
-Autant de ressources que necessaire peuvent etre declarees.
+uploader un fichier : 
+http://localhost:8080/rest/tp2/ftp/initUpload/
 
-Le lancement du framework se fait en invoquant la methode Main de la classe
-car.tp2.Starter.
+aller dans le dossier 'dossier' :
+http://localhost:8080/rest/tp2/ftp/cwd/dossiers
 
-Une fois lancees, les ressources sont accessibles, par exemple via un
-navigateur, en chargeant une URL de la forme :
+revenir dans le dossier parent : 
+http://localhost:8080/rest/tp2/ftp/cdup
 
-	http://localhost:8080/rest/tp2/_ressource_
-	par exemple : http://localhost:8080/rest/tp2/helloworld
-	
+créer un dossier 'dossier' : 
+http://localhost:8080/rest/tp2/ftp/mkd/dossiers
 
-Lionel Seinturier.
-23 juillet 2015.
+supprimer fichier ou dossiers : 
+http://localhost:8080/rest/tp2/ftp/rm/file
+
+afficher le repertoire courant : 
+se connecter : 
+http://localhost:8080/rest/tp2/ftp/pwd
+
+Remarques : 
+- Pour retourner dans le dossier parent, l'appel a cdup est nécessaire, appuyer sur la flèche de retour du navigateur ne fonctionne pas.
+
+- Ce TP a été très laborieux à réaliser et a poser de nombreux problèmes (\r\n au lieu de \n, parser incompatible, cours sur REST très incomplets, librairie commons-net-3.2.jar donnée sur moodle périmé).
+    Mettre des exemples plus concret sur la manière d'utiliser ftpClient et REST en général et mettre un TD sur REST ne serait pas du luxe.
 
 
-[1] http://aredko.blogspot.fr/2013/01/going-rest-embedding-jetty-with-spring.html
+
