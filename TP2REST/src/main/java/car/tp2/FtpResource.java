@@ -31,28 +31,6 @@ public class FtpResource {
 
 	@GET
 	@Produces("text/html")
-	@Path("/co/{login}/{mdp}")
-	public String connexion(@PathParam("login") String login,
-			@PathParam("mdp") String mdp) throws SocketException, IOException {
-		ftpClient = new FTPClient();
-		ftpClient.enterLocalPassiveMode();
-		FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_L8);
-		conf.setUnparseableEntries(true);
-		ftpClient.configure(conf);
-		ftpClient.connect("localhost", 8081);
-		ftpClient.login(login, mdp);
-		int codeDeRetour = ftpClient.getReplyCode();
-		if (codeDeRetour == ReturnCode.AUTHENTIFICATION_OK) {
-			co = true;
-			return "<h1>Vous etes authentifie.</h1>";
-		} else {
-			co = false;
-			return "<h1>Authentification echoue.</h1>";
-		}
-	}
-
-	@GET
-	@Produces("text/html")
 	@Path("/deco/")
 	public String deconnexion(@PathParam("login") String login,
 			@PathParam("mdp") String mdp) throws SocketException, IOException {
@@ -82,7 +60,7 @@ public class FtpResource {
 		if (codeDeRetour == ReturnCode.SERVICE_OK) {
 			return getList();
 		} else {
-			return "<h1>operation impossible." + codeDeRetour + "</h1>";
+			return "<h1>operation impossible.</h1>";
 		}
 	}
 
@@ -155,7 +133,50 @@ public class FtpResource {
 		fileo.close();
 		return file;
 	}
+	
+	@GET
+	@Produces("text/html")
+	@Path("/auth")
+	public String initAuth() throws IOException {
+		String tmp = "<div>"
+				+ "<h1 style='font-size:1.2em;"
+				+ " font-family: sans'>Authentification"
+				+ "</h1>"
+				+ "<form method='POST' action='http://localhost:8080/rest/tp2/ftp/authentification'"
+				+ " enctype='multipart/form-data'>"
+				+ "User name:<br>"
+				+ "<input type=\"text\" name=\"login\"><br>"
+				+ "User password:<br>"
+				+ "<input type=\"password\" name=\"psw\"><br>"
+				+ "<input type='submit' value='Valider'>"
+				+ "</form> </div>";
 
+		return tmp;
+	}
+	
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces("text/html; charset=UTF-8")
+	@Path("/authentification")
+	public String authentification(@Multipart("login") String login,
+			@Multipart("psw") String psw) throws IOException {
+		ftpClient = new FTPClient();
+		ftpClient.enterLocalPassiveMode();
+		FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_L8);
+		conf.setUnparseableEntries(true);
+		ftpClient.configure(conf);
+		ftpClient.connect("localhost", 8081);
+		ftpClient.login(login, psw);
+		int codeDeRetour = ftpClient.getReplyCode();
+		if (codeDeRetour == ReturnCode.AUTHENTIFICATION_OK) {
+			co = true;
+			return "<h1>Vous etes authentifie.</h1>";
+		} else {
+			co = false;
+			return "<h1>Authentification echoue.</h1>";
+		}
+	}
+	
 	@GET
 	@Produces("text/html")
 	@Path("/initUpload")

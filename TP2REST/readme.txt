@@ -1,7 +1,7 @@
 Dimitri Charneux
 
 Pour se connecter : 
-http://localhost:8080/rest/tp2/ftp/co/login/mdp
+http://localhost:8080/rest/tp2/ftp/auth
 
 se deconnecter : 
 http://localhost:8080/rest/tp2/ftp/deco
@@ -37,7 +37,7 @@ DELETE.
 - La création et la modification de fichier se font toutes les deux grâce à la méthode POST car le serveur FTP ne fait pas la différence entre création et modification des fichiers.
 
 - Ce TP a été très laborieux à réaliser et a poser de nombreux problèmes (\r\n au lieu de \n, parser incompatible, cours sur REST très incomplets, librairie commons-net-3.2.jar donnée sur moodle périmé).
-    Mettre des exemples plus concret sur la manière d'utiliser ftpClient et REST en général et mettre un TD sur REST ne serait pas du luxe.
+- Mettre des exemples plus concret sur la manière d'utiliser ftpClient et REST en général et mettre un TD sur REST ne serait pas du luxe.
 
 
 
