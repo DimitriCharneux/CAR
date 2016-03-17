@@ -142,7 +142,7 @@ public class FtpRequest extends Thread {
 			break;
 		case "PWD":
 			if (estAuthentifer) {
-				send("257\"" + processPWD() + "\" is current directory.");
+				send("257 " + processPWD() + " is current directory.");
 			} else
 				send(ReturnCode.nonConnecte());
 			break;
@@ -263,7 +263,7 @@ public class FtpRequest extends Thread {
 	 * This method return the path of the current working directory.
 	 */
 	public String processPWD() {
-		String str = repertoire.getPath().replace(Server.repertoire, "") + "\r\n";
+		String str = repertoire.getPath().replace(Server.repertoire, "");
 		return str;
 	}
 

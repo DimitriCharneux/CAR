@@ -45,7 +45,8 @@ public class FtpResource {
 	public String getPwd() throws SocketException, IOException {
 		if (!co)
 			return "<h1>Vous devez vous connecter.</h1>";
-		return "<a>" + ftpClient.printWorkingDirectory() + "</a>";
+		String dir = ftpClient.printWorkingDirectory();
+		return "<a>" + dir + "</a>";
 	}
 
 	@GET
@@ -106,8 +107,8 @@ public class FtpResource {
 
 	private String generateHTML(FTPFile[] ftpFiles) {
 		if (ftpFiles.length == 0)
-			return "<a>Ce dossier est vide.</a>";
-		String tmp = "<table>";
+			return "<a>Ce dossier est vide.</a></br><a href=\"http://localhost:8080/rest/tp2/ftp/cdup\">..</a>";
+		String tmp = "<table><tr><td><a href=\"http://localhost:8080/rest/tp2/ftp/cdup\">..</a></td></tr>";
 		for (FTPFile file : ftpFiles) {
 			String tmp2 = file.toString();
 			String tmp3 = tmp2.substring(1, tmp2.length());
