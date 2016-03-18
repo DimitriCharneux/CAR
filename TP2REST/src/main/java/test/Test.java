@@ -48,6 +48,13 @@ public class Test {
 		res.authentification("userTest", "userTest");
 		assertEquals("<a>/userTest</a>", res.getPwd());
 	}
+	
+	@org.junit.Test
+	public void deconnexion() throws SocketException, IOException {
+		assertEquals("<h1>Vous etes authentifie.</h1>", res.authentification("userTest", "userTest"));
+		res.deconnexion();
+		assertEquals("<h1>Vous devez vous connecter.</h1>", res.getPwd());
+	}
 
 	@org.junit.Test
 	public void testCWD() throws IOException {
@@ -85,12 +92,13 @@ public class Test {
 		FileOutputStream output = new FileOutputStream(f);
 		output.write("test".getBytes());
 		output.close();
-		String tmp = "<table><tr><td><a href=\"http://localhost:8080/rest/tp2/ftp/cwd/repTest\">repTest</a></td></tr><tr><td><a href=\"http://localhost:8080/rest/tp2/ftp/get/fileTest\">fileTest</a></td></tr></table>";
+		String tmp = "<table><tr><td><a href=\"http://localhost:8080/rest/tp2/ftp/cdup\">.." +
+				"</a></td></tr><tr><td><a href=\"http://localhost:8080/rest/tp2/ftp/cwd/repTest\">" +
+				"repTest</a></td></tr><tr><td><a href=\"http://localhost:8080/rest/tp2/ftp/get/fileTest\">" +
+				"fileTest</a></td></tr></table>";
 		assertEquals(tmp,res.getList());
-		f = new File("repPrincipal/userTest/fileTest");
-		f.delete();
-		f = new File("repPrincipal/userTest/repTest");
-		f.delete();
-		assertEquals("<a>Ce dossier est vide.</a>", res.getList());
+		res.deleteFile("fileTest");
+		res.deleteFile("repTest");
+		assertEquals("<a>Ce dossier est vide.</a></br><a href=\"http://localhost:8080/rest/tp2/ftp/cdup\">..</a>", res.getList());
 	}
 }

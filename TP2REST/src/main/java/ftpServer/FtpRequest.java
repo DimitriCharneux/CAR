@@ -142,7 +142,7 @@ public class FtpRequest extends Thread {
 			break;
 		case "PWD":
 			if (estAuthentifer) {
-				send("257 " + processPWD() + " is current directory.");
+				send("257 " + processPWD());
 			} else
 				send(ReturnCode.nonConnecte());
 			break;

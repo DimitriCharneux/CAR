@@ -23,22 +23,38 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import ftpServer.FtpRequest;
 import ftpServer.ReturnCode;
 
+/**
+ * Cette classe va gérer une interface web en REST d'un serveur FTP.
+ * @author Dimitri Charneux
+ *
+ */
 @Path("/ftp")
 public class FtpResource {
 
 	private FTPClient ftpClient = new FTPClient();
 	private boolean co = false;
 
+	/**
+	 * Methode qui sert à ce déconnecter du serveur FTP.
+	 * @return une page web indiquant que l'on est déconnecté.
+	 * @throws SocketException
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("text/html")
 	@Path("/deco/")
-	public String deconnexion(@PathParam("login") String login,
-			@PathParam("mdp") String mdp) throws SocketException, IOException {
+	public String deconnexion() throws SocketException, IOException {
 		ftpClient.quit();
 		co = false;
 		return "<h1>Deconnecte.</h1>";
 	}
 
+	/**
+	 * Méthode utilisée pour afficher le repertoire courant de la personne connectée.
+	 * @return le répertoire courant.
+	 * @throws SocketException
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("text/html")
 	@Path("/pwd")
@@ -49,6 +65,13 @@ public class FtpResource {
 		return "<a>" + dir + "</a>";
 	}
 
+	/**
+	 * Méthode utilisée pour changer de répertoire courant.
+	 * @param dir dossier dans lequel ont souhaite aller.
+	 * @return La liste des fichiers dans le dossier donné en paramètre.
+	 * @throws SocketException
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("text/html")
 	@Path("/cwd/{dir}")
@@ -65,6 +88,12 @@ public class FtpResource {
 		}
 	}
 
+	/**
+	 * Méthode servant à retourner dans le répertoire parent.
+	 * @return La liste des fichiers dans le répertoire parent.
+	 * @throws SocketException
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("text/html")
 	@Path("/cdup")
@@ -79,7 +108,14 @@ public class FtpResource {
 			return "<h1>operation impossible.</h1>";
 		}
 	}
-
+ 
+	/**
+	 * Méthode servant à créer un répertoire dans le répertoire courant.
+	 * @param dir Répertoire que l'on souhaite créer.
+	 * @return La liste des éléments présents dans le répertoire courant.
+	 * @throws SocketException
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("text/html")
 	@Path("/mkd/{dir}")
@@ -96,6 +132,12 @@ public class FtpResource {
 		}
 	}
 
+	/**
+	 * Méthode affichant les éléments présents dans le répertoire courant.
+	 * @return La liste des éléments présents dans le répertoire courant.
+	 * @throws SocketException
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("text/html")
 	@Path("/ls")
@@ -105,6 +147,11 @@ public class FtpResource {
 		return generateHTML(ftpClient.listFiles(""));
 	}
 
+	/**
+	 * Méthode utilisée pour générer une page html qui affiche les éléments envoyés en paramètres.
+	 * @param ftpFiles élements à afficher dans la page html.
+	 * @return Une page html contenant les éléments de la liste.
+	 */
 	private String generateHTML(FTPFile[] ftpFiles) {
 		if (ftpFiles.length == 0)
 			return "<a>Ce dossier est vide.</a></br><a href=\"http://localhost:8080/rest/tp2/ftp/cdup\">..</a>";
@@ -123,6 +170,13 @@ public class FtpResource {
 		return tmp;
 	}
 
+	/**
+	 * Méthode retournant le fichier dont le nom a été passer en paramètre.
+	 * @param fileName nom du fichier à retourner.
+	 * @return Le fichier dont le nom a été envoyé.
+	 * @throws SocketException
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("application/octet-stream")
 	@Path("/get/{file: .*}")
@@ -135,6 +189,11 @@ public class FtpResource {
 		return file;
 	}
 	
+	/**
+	 * Méthode renvoyant le code d'une page html d'authentification.
+	 * @return Code d'une page html d'authentification.
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("text/html")
 	@Path("/auth")
@@ -155,6 +214,13 @@ public class FtpResource {
 		return tmp;
 	}
 	
+	/**
+	 * Méthode pour connecter un utilisateur au serveur ftp.
+	 * @param login login de l'utilisateur.
+	 * @param psw mot de passe de l'utilisateur.
+	 * @return Une page html indiquant si l'utilisateur a été connecté ou non.
+	 * @throws IOException
+	 */
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces("text/html; charset=UTF-8")
@@ -178,6 +244,11 @@ public class FtpResource {
 		}
 	}
 	
+	/**
+	 * Méthode renvoyant une page html servant à envoyer un fichier au serveur.
+	 * @return Une page html servant à envoyer un fichier au serveur.
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("text/html")
 	@Path("/initUpload")
@@ -199,6 +270,13 @@ public class FtpResource {
 		return tmp;
 	}
 
+	/**
+	 * Méthode utilisée pour envoyer un fichier au serveur FTP. 
+	 * @param fichier Fichier envoyé au serveur.
+	 * @param name Nom du fichier envoyé au serveur.
+	 * @return Une page html contenant la liste des fichiers du répertoire courant.
+	 * @throws IOException
+	 */
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces("text/html; charset=UTF-8")
@@ -216,7 +294,13 @@ public class FtpResource {
 		}
 	}
 	
-	
+	/**
+	 * Méthode utiliser pour supprimer un fichier ou un dossier.
+	 * @param file Nom de l'élément à supprimer du serveur.
+	 * @return Une page html contenant la liste des fichiers du répertoire courant.
+	 * @throws SocketException
+	 * @throws IOException
+	 */
 	@GET
 	@Produces("text/html")
 	@Path("/rm/{file}")

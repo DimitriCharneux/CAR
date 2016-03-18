@@ -28,6 +28,15 @@ afficher le repertoire courant :
 se connecter : 
 http://localhost:8080/rest/tp2/ftp/pwd
 
+Tests unitaires :
+Quelques tests unitaires ont été réalisés. L'authentification, la création de dossier, le list, la déconnexion et l'affichage du répertoire courant ont été testés. La suppression de fichier et dossier a été réalisée dans le test de ls.
+Le test pour le change diretory et le cdup a été réalisé mais plante pour une raison inconnue, c'est pour cela qu'il a été commenté.
+Pour réaliser une couverture de test complète, il aurait fallut tester les points suivant : 
+	-l'envoi de fichier en envoyant un fichier et en regardant qu'il est bien dans le répertoire du serveur.
+	-la réception de fichier en appelant le méthode pour le recevoir et en testant qu'il est bien égal au fichier source.
+
+ 
+
 Remarques : 
 - Pour retourner dans le dossier parent, l'appel a cdup est nécessaire, appuyer sur la flèche de retour du navigateur ne fonctionne pas.
 
