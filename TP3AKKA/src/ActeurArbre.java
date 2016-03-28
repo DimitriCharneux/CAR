@@ -6,19 +6,19 @@ import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 
 /**
- * Cette classe représente un acteur de notre architecture akka.
+ * Cette classe représente un acteur de notre architecture akka. Cette classee est obsolète car elle ne fonctionne que pour les arbres.
  * 
  * @author Dimitri Charneux
  * 
  */
-public class Acteur extends UntypedActor {
+public class ActeurArbre extends UntypedActor {
 	private List<ActorRef> fils;
 	private ActorRef pere;
 
 	/**
 	 * Constructeur de la classe.
 	 */
-	public Acteur() {
+	public ActeurArbre() {
 		fils = new ArrayList<ActorRef>();
 	}
 

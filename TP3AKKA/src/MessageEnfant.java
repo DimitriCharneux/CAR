@@ -9,7 +9,7 @@ import akka.actor.ActorRef;
  */
 public class MessageEnfant implements Serializable{
 	private static final long serialVersionUID = 4104056810899927705L;
-	public final static int AJOUTEFILS = 42, ENLEVEFILS = 1337, AJOUTEPERE = 666, ENLEVEPERE = 2016; 
+	public final static int AJOUTEFILS = 42, ENLEVEFILS = 1337, AJOUTEPERE = 666, ENLEVEPERE = 2016, AJOUTEVOISIN = 1234, ENLEVEVOISIN = 4321; 
 	private ActorRef acteur;
 	private int methode;
 	
@@ -65,6 +65,10 @@ public class MessageEnfant implements Serializable{
 			return " ajoute le pere " + acteur.path().name() ;
 		case ENLEVEPERE:
 			return " enleve le pere " + acteur.path().name() ;
+		case AJOUTEVOISIN:
+			return " ajoute le voisin " + acteur.path().name() ;
+		case ENLEVEVOISIN:
+			return " enleve le voisin " + acteur.path().name() ;
 		default:
 			return "methode introuvable";
 		}
