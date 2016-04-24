@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html" charset="utf-8"/>
+    <title>Saisie d'un livre</title>
+  </head>
+  <body>
+  <form action="http://localhost/formulaire.html" method="post">
+    <div>
+        <label>Titre :</label>
+        <input type="text" id="titre"/>
+    </div>
+    <div>
+        <label>Auteur :</label>
+        <input type="text" id="auteur"/>
+    </div>
+    <div>
+        <label>Année de parution :</label>
+        <input type="text" id="annee"/>
+    </div>
+    
+    <div class="button">
+        <button type="submit">Envoyer votre message</button>
+    </div>
+    
+    <%
+        titre = request.getParameter("titre");
+        if(titre != null){
+            out.println("<h1>Recapitulatif : </h1>");
+            out.println("Titre : " + titre + "<br />");
+            String auteur = request.getParameter("auteur");
+            String annee = request.getParameter("annee");
+            if(auteur!=null)
+                out.println("Auteur : " + auteur + "<br />");
+            try{
+                if(annee!=null){
+                    int anneeInt = Integer.parseInt(annee);
+                    out.println("Année de parution : " + anneeInt + "<br />");
+                }
+            }catch(Exception e){}
+            
+                
+        }
+    %>
+    
+</form>
+  </body>
+</html>
