@@ -365,12 +365,25 @@
 
 <servlet>
     <servlet-name>InitBiblio</servlet-name>
-    <servlet-class>car.tp4.Nom</servlet-class>
+    <servlet-class>main.java.InitialiseBibliothequeServlet</servlet-class>
+ </servlet>
+
+<servlet>
+    <servlet-name>AfficheAuteurs</servlet-name>
+    <servlet-class>main.java.AfficheAuteursServlet</servlet-class>
  </servlet>
 
 
 
+<servlet-mapping>
+    <servlet-name>InitBiblio</servlet-name>
+    <url-pattern>/InitBiblio</url-pattern>
+</servlet-mapping>
 
+<servlet-mapping>
+    <servlet-name>AfficheAuteurs</servlet-name>
+    <url-pattern>/AfficheAuteurs</url-pattern>
+</servlet-mapping>
 
 
 
