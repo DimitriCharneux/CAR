@@ -362,6 +362,21 @@
   <!-- must uncomment these mappings (or add them to your application's own -->
   <!-- web.xml deployment descriptor) to enable these services              -->
 
+
+<servlet>
+    <servlet-name>InitBiblio</servlet-name>
+    <servlet-class>car.tp4.Nom</servlet-class>
+ </servlet>
+
+
+
+
+
+
+
+
+
+
     <!-- The mapping for the default servlet -->
     <servlet-mapping>
         <servlet-name>default</servlet-name>
