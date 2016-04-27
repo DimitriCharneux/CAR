@@ -1,13 +1,15 @@
-<%@ page import="main.java.car.tp4.*"%>
+<%@ page import="car.tp4.*"%>
 
 <html>
-<h1>Initialisation des données</h1>
+<h1>Initialisation des donnees</h1>
 <%
 
-String res = (string) request.getAttribute("init");
-if ( res != null ) {
-    out.print(res);
-}
+	String res = (String) request.getAttribute("result");
+	if ( res != null ) {
+    	out.println(res);
+	} else {
+		out.println("initialisation echouee");
+	}
 
 %>
 

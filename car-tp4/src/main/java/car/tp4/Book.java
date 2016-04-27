@@ -1,14 +1,11 @@
 package car.tp4;
-import java.io.Serializable;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Book implements Serializable{
+public class Book{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -19,6 +16,12 @@ public class Book implements Serializable{
 	private String titre;
 	
 	private String annee;
+	
+	public Book(){
+		this.auteur = "default";
+		this.titre = "default";
+		this.annee = "default";
+	}
 	
 	public Book(String auteur, String titre, String annee){
 		this.auteur = auteur;
