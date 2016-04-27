@@ -355,30 +355,6 @@
     </servlet>
 -->
 
-<servlet>
-    <servlet-name>InitialiseBibliothequeServlet</servlet-name>
-    <servlet-class>car.tp4.InitialiseBibliothequeServlet</servlet-class>
- </servlet>
-
-
-
-<servlet-mapping>
-    <servlet-name>InitialiseBibliothequeServlet</servlet-name>
-    <url-pattern>/InitialiseBibliothequeServlet</url-pattern>
-</servlet-mapping>
-
-
-<servlet>
-    <servlet-name>AfficheAuteursServlet</servlet-name>
-    <servlet-class>car.tp4.AfficheAuteursServlet</servlet-class>
- </servlet>
-
-
-
-<servlet-mapping>
-    <servlet-name>AfficheAuteursServlet</servlet-name>
-    <url-pattern>/AfficheAuteursServlet</url-pattern>
-</servlet-mapping>
 
 
   <!-- ================ Built In Servlet Mappings ========================= -->

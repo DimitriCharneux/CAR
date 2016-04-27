@@ -7,6 +7,5 @@ import javax.ejb.Remote;
 @Local
 public interface BibliothequeItf {
 	public void initBiblio();
-	public String ok();
 	public List<String> retourneAuteurs();
 }

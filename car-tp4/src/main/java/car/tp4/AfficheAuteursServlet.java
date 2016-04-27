@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 
 public class AfficheAuteursServlet extends HttpServlet{
-	@EJB(name="maBiblio")
+
+	private static final long serialVersionUID = 1L;
+	@EJB(name="Bibliotheque")
 	private BibliothequeItf biblio;
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException{

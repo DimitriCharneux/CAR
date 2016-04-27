@@ -8,23 +8,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Livre implements Serializable{
+public class Book implements Serializable{
 	
 	@Id
-	@Column(name="ID")
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 	
-	@Column(name="AUTEUR")
 	private String auteur;
 	
-	@Column(name="TITRE")
 	private String titre;
 	
-	@Column(name="ANNEE")
 	private String annee;
 	
-	public Livre(String auteur, String titre, String annee){
+	public Book(String auteur, String titre, String annee){
 		this.auteur = auteur;
 		this.titre = titre;
 		this.annee = annee;
