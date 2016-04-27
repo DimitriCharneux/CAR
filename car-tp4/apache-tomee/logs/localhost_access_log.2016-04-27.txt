@@ -1,0 +1,6 @@
+127.0.0.1 - - [27/Apr/2016:16:38:51 +0200] "GET /InitialiseBibliothequeServlet HTTP/1.1" 500 30
+127.0.0.1 - - [27/Apr/2016:16:38:51 +0200] "GET /favicon.ico HTTP/1.1" 404 1016
+127.0.0.1 - - [27/Apr/2016:16:39:12 +0200] "GET /InitialiseBibliothequeServlet HTTP/1.1" 500 1540
+127.0.0.1 - - [27/Apr/2016:17:31:55 +0200] "GET /InitialiseBibliothequeServlet HTTP/1.1" 500 1540
+127.0.0.1 - - [27/Apr/2016:17:31:55 +0200] "GET /InitialiseBibliothequeServlet HTTP/1.1" 500 1540
+127.0.0.1 - - [27/Apr/2016:17:31:55 +0200] "GET /InitialiseBibliothequeServlet HTTP/1.1" 500 1540
