@@ -15,7 +15,7 @@ public class Bibliotheque {
 	private EntityManager em;
 
 	public void initBiblio() {
-
+		init();
 		Book tmp = new Book("Victor Hugo", "Les miserables", "1862");
 		em.persist(tmp);
 		tmp = new Book("Charles Baudelaire", "Les fleurs du mal", "1867");
