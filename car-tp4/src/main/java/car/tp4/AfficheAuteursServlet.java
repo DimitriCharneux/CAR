@@ -19,6 +19,7 @@ public class AfficheAuteursServlet extends HttpServlet{
 	private Bibliotheque biblio;
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException{
+		resp.setContentType("text/html");
 		req.setAttribute("auteurs", biblio.retourneAuteurs());
 		this.getServletContext().getRequestDispatcher("/auteurs.jsp").forward(req, resp);
 	}

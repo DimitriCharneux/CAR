@@ -1,4 +1,3 @@
-<%@ page import="car.tp4.*"%>
 
 <html>
 <h1>Initialisation des donnees</h1>
